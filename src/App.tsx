@@ -11,6 +11,7 @@ import { YearlyGrid } from '@/components/YearlyGrid'
 import { Legend } from '@/components/Legend'
 import { ProgressIndicator } from '@/components/ProgressIndicator'
 import { SidebarActions } from '@/components/SidebarActions'
+import { DataActions } from '@/components/DataActions'
 import { getMoodColor } from '@/utils/colorUtils'
 import type { Mood } from '@/types'
 import styles from './App.module.css'
@@ -60,6 +61,7 @@ function ReflectView() {
         <SidebarActions />
         <ProgressIndicator />
         <Legend />
+        <DataActions />
       </div>
     </div>
   )

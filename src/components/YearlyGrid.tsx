@@ -1,12 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useMoodData } from '@/hooks/useMoodData'
-import { useTheme } from '@/hooks/useTheme'
-import { generateYearDays, formatDate, isToday, getDateInfo } from '@/utils/dateUtils'
-import { getMoodColor, getEmptyCellColor } from '@/utils/colorUtils'
+import { formatDate, isToday, getDateInfo } from '@/utils/dateUtils'
 import { MOOD_LABELS } from '@/types'
 import type { Mood } from '@/types'
 import { GridCell } from './GridCell'
+import { MoodCircleCluster } from './MoodCircleCluster'
 import styles from './YearlyGrid.module.css'
 
 interface YearlyGridProps {
@@ -16,11 +15,17 @@ interface YearlyGridProps {
 
 export function YearlyGrid({ year = new Date().getFullYear(), onCellClick }: YearlyGridProps) {
   const { getMood, hasMood, setMood } = useMoodData()
-  const { theme } = useTheme()
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [hoveredDate, setHoveredDate] = useState<string | null>(null)
 
-  const yearDays = generateYearDays(year)
+  // Generate year days
+  const yearDays: Date[] = []
+  const startDate = new Date(year, 0, 1)
+  const endDate = new Date(year, 11, 31)
+  
+  for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+    yearDays.push(new Date(date))
+  }
   
   // Group days by month for grid layout
   const months: { [month: number]: Date[] } = {}
@@ -46,16 +51,18 @@ export function YearlyGrid({ year = new Date().getFullYear(), onCellClick }: Yea
     }
   }, [selectedDate, setMood, onCellClick])
 
-  // Keyboard shortcuts: Escape to close modal, 1-5 to select mood
+  // Keyboard shortcuts: Escape to close modal, 1-4 to select mood
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (!selectedDate) return
 
       if (e.key === 'Escape') {
         setSelectedDate(null)
-      } else if (e.key >= '1' && e.key <= '5') {
-        const mood = parseInt(e.key) as Mood
-        handleMoodSelect(mood)
+      } else if (e.key >= '1' && e.key <= '4') {
+        const moodIndex = parseInt(e.key) - 1
+        if (moodIndex < MOOD_LABELS.length) {
+          handleMoodSelect(MOOD_LABELS[moodIndex].value)
+        }
       }
     }
 
@@ -87,7 +94,6 @@ export function YearlyGrid({ year = new Date().getFullYear(), onCellClick }: Yea
                   const hasMoodLogged = hasMood(dateStr)
                   const isTodayCell = isToday(date)
                   const isHovered = hoveredDate === dateStr
-                  const isSelected = selectedDate === dateStr
 
                   return (
                     <GridCell
@@ -97,7 +103,6 @@ export function YearlyGrid({ year = new Date().getFullYear(), onCellClick }: Yea
                       hasMood={hasMoodLogged}
                       isToday={isTodayCell}
                       isHovered={isHovered}
-                      isSelected={isSelected}
                       onClick={() => handleCellClick(date)}
                       onHover={() => setHoveredDate(dateStr)}
                       onLeave={() => setHoveredDate(null)}
@@ -113,40 +118,27 @@ export function YearlyGrid({ year = new Date().getFullYear(), onCellClick }: Yea
       {/* Mood selector modal for editing */}
       <AnimatePresence>
         {selectedDate && (
+          <motion.div
+            className={styles.modal}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedDate(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+          >
             <motion.div
-              className={styles.modal}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedDate(null)}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="modal-title"
+              className={styles.modalContent}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <motion.div
-                className={styles.modalContent}
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <h3 id="modal-title">Select mood for {selectedDate}</h3>
-              <div className={styles.modalButtons}>
-                {MOOD_LABELS.map(({ value, label }) => (
-                  <motion.button
-                    key={value}
-                    className={styles.modalButton}
-                    style={{
-                      backgroundColor: getMoodColor(value, theme),
-                    }}
-                    onClick={() => handleMoodSelect(value)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {label}
-                  </motion.button>
-                ))}
-              </div>
+              <h3 id="modal-title" className={styles.modalTitle}>
+              How did you feel on {selectedDate}?
+              </h3>
+              <MoodCircleCluster onSelect={handleMoodSelect} compact />
             </motion.div>
           </motion.div>
         )}
@@ -154,4 +146,3 @@ export function YearlyGrid({ year = new Date().getFullYear(), onCellClick }: Yea
     </div>
   )
 }
-

@@ -23,7 +23,7 @@ export function Header() {
         )
         if (shouldReplace) {
           try {
-            const data = await importMoodData(file)
+            await importMoodData(file)
             // Data will be saved by useMoodData hook
             window.location.reload() // Reload to refresh state
           } catch (error) {

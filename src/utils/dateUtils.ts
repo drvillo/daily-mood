@@ -78,10 +78,6 @@ export function getYearProgress(year: number = new Date().getFullYear()): number
  */
 export function generateYearDays(year: number): Date[] {
   const dates: Date[] = []
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ]
 
   for (let month = 0; month < 12; month++) {
     const daysInMonth = new Date(year, month + 1, 0).getDate()

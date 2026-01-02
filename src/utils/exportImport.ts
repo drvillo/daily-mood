@@ -1,4 +1,4 @@
-import type { StorageData, ExportData, MoodData } from '@/types'
+import type { StorageData, ExportData } from '@/types'
 import { saveMoodData } from './storage'
 
 /**

@@ -12,7 +12,6 @@ interface GridCellProps {
   hasMood: boolean
   isToday: boolean
   isHovered: boolean
-  isSelected: boolean
   onClick: () => void
   onHover: () => void
   onLeave: () => void
@@ -24,7 +23,6 @@ export function GridCell({
   hasMood,
   isToday,
   isHovered,
-  isSelected,
   onClick,
   onHover,
   onLeave,

@@ -1,0 +1,42 @@
+.container {
+  padding: 1.25rem;
+  background: var(--color-surface);
+  border-radius: 12px;
+}
+
+.linkActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.linkButton {
+  padding: 0.25rem 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  
+  background: transparent;
+  border: none;
+  
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  
+  transition: color 0.2s ease;
+}
+
+.linkButton:hover {
+  color: var(--color-primary);
+}
+
+.linkButton:focus {
+  outline: none;
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.separator {
+  color: var(--color-text-secondary);
+  opacity: 0.5;
+}
+

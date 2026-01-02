@@ -1,4 +1,4 @@
-import type { StorageData, MoodData } from '@/types'
+import type { StorageData, MoodData, Mood } from '@/types'
 
 const STORAGE_KEY = 'mood-tracker-data'
 const CURRENT_VERSION = '1.0'
@@ -91,17 +91,17 @@ export function clearMoodData(): boolean {
 /**
  * Get mood for a specific date
  */
-export function getMoodForDate(moods: MoodData, date: string): number | null {
+export function getMoodForDate(moods: MoodData, date: string): Mood | null {
   return moods[date] || null
 }
 
 /**
  * Set mood for a specific date
  */
-export function setMoodForDate(moods: MoodData, date: string, mood: number): MoodData {
+export function setMoodForDate(moods: MoodData, date: string, mood: Mood): MoodData {
   return {
     ...moods,
-    [date]: mood as 1 | 2 | 3 | 4 | 5,
+    [date]: mood,
   }
 }
 
