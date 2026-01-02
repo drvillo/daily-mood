@@ -1,0 +1,28 @@
+/* Light theme (default) */
+:root,
+[data-theme="light"] {
+  --color-background: lch(98% 2 200);
+  --color-surface: lch(100% 0 200);
+  --color-text: lch(20% 5 200);
+  --color-text-secondary: lch(50% 5 200);
+  --color-border: lch(85% 5 200);
+  --color-primary: lch(60% 30 250);
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --color-background: lch(15% 5 200);
+  --color-surface: lch(20% 5 200);
+  --color-text: lch(95% 2 200);
+  --color-text-secondary: lch(70% 5 200);
+  --color-border: lch(30% 5 200);
+  --color-primary: lch(50% 25 250);
+}
+
+/* Ensure smooth theme transitions */
+* {
+  transition: background-color var(--timing-normal) ease,
+              color var(--timing-normal) ease,
+              border-color var(--timing-normal) ease;
+}
+

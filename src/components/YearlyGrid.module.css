@@ -1,0 +1,107 @@
+.container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 0.5rem;
+  min-width: fit-content;
+}
+
+.monthColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.monthHeader {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding: 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.daysColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.emptyCell {
+  aspect-ratio: 1;
+  min-height: 0;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modalContent {
+  background: var(--color-background);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modalContent h3 {
+  margin: 0 0 1.5rem 0;
+  color: var(--color-text);
+  font-size: 1.25rem;
+}
+
+.modalButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.modalButton {
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modalButton:hover {
+  transform: scale(1.02);
+}
+
+.modalButton:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+@media (min-width: 768px) {
+  .modalButtons {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .modalButton {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+

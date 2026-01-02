@@ -1,0 +1,109 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.logViewWrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.logView {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 100vh;
+  padding: 2rem;
+  padding-bottom: 5rem;
+}
+
+.viewYearLink {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: 100;
+  
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  
+  background: transparent;
+  border: none;
+  
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  
+  transition: color 0.2s ease;
+}
+
+.viewYearLink:hover {
+  color: var(--color-primary);
+}
+
+.viewYearLink:focus {
+  outline: none;
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.reflectView {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.mainContent {
+  flex: 1;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.flashOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1000;
+  will-change: opacity, transform;
+}
+
+@media (max-width: 480px) {
+  .viewYearLink {
+    bottom: 1rem;
+    left: 1rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .reflectView {
+    flex-direction: row;
+  }
+
+  .sidebar {
+    width: 300px;
+    flex-shrink: 0;
+  }
+}
