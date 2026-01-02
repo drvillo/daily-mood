@@ -1,6 +1,6 @@
 {
-  "name": "Yearly Mood Tracker",
-  "short_name": "Mood Tracker",
+  "name": "Am I moody?",
+  "short_name": "Am I moody?",
   "description": "A simple, visual mood tracking app with yearly grid view",
   "theme_color": "#f0f4f8",
   "background_color": "#f0f4f8",
@@ -9,17 +9,28 @@
   "scope": "/",
   "icons": [
     {
-      "src": "icons/icon-192x192.png",
+      "src": "icons/manifest-icon-192.maskable.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "icons/icon-512x512.png",
+      "src": "icons/manifest-icon-192.maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/manifest-icon-512.maskable.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icons/manifest-icon-512.maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
-
