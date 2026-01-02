@@ -27,6 +27,23 @@
   letter-spacing: 0.05em;
 }
 
+.monthFull {
+  display: block;
+}
+
+.monthShort {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .monthFull {
+    display: none;
+  }
+  .monthShort {
+    display: block;
+  }
+}
+
 .daysColumn {
   display: flex;
   flex-direction: column;

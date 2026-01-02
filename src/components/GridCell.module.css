@@ -1,17 +1,24 @@
 .cell {
   aspect-ratio: 1;
-  min-width: 0;
+  min-width: 24px;
+  min-height: 24px;
   border-radius: 4px;
   cursor: pointer;
   position: relative;
-  transition: all 0.2s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
   padding: 0;
   background: none;
   border: none;
 }
 
 .cell:hover {
+  transform: scale(1.1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.cell:active {
+  transform: scale(0.95);
 }
 
 .cell:focus {
@@ -23,7 +30,7 @@
   position: absolute;
   bottom: 100%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(4px);
   margin-bottom: 0.5rem;
   background: var(--color-background);
   color: var(--color-text);
@@ -35,6 +42,15 @@
   z-index: 100;
   pointer-events: none;
   border: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+}
+
+.cell:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }
 
 .tooltipDate {
@@ -56,5 +72,17 @@
   border-radius: 50%;
   background: var(--color-primary);
   box-shadow: 0 0 8px var(--color-primary);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
 }
 

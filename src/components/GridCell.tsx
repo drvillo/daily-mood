@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { memo, useMemo } from 'react'
 import { useTheme } from '@/hooks/useTheme'
 import { getMoodColor, getEmptyCellColor, getTodayHighlightColor } from '@/utils/colorUtils'
 import { formatDate } from '@/utils/dateUtils'
@@ -11,25 +11,22 @@ interface GridCellProps {
   mood: Mood | null
   hasMood: boolean
   isToday: boolean
-  isHovered: boolean
   onClick: () => void
-  onHover: () => void
-  onLeave: () => void
 }
 
-export function GridCell({
+function GridCellBase({
   date,
   mood,
   hasMood,
   isToday,
-  isHovered,
   onClick,
-  onHover,
-  onLeave,
 }: GridCellProps) {
   const { theme } = useTheme()
   const dateStr = formatDate(date)
-  const moodLabel = mood ? MOOD_LABELS.find((m) => m.value === mood)?.label : null
+  const moodLabel = useMemo(
+    () => (mood ? MOOD_LABELS.find((m) => m.value === mood)?.label : null),
+    [mood]
+  )
 
   const backgroundColor = hasMood && mood
     ? getMoodColor(mood, theme)
@@ -40,7 +37,7 @@ export function GridCell({
     : 'transparent'
 
   return (
-    <motion.button
+    <button
       className={styles.cell}
       style={{
         backgroundColor,
@@ -49,18 +46,6 @@ export function GridCell({
         borderStyle: 'solid',
       }}
       onClick={onClick}
-      onMouseEnter={onHover}
-      onMouseLeave={onLeave}
-      whileHover={{ scale: 1.1, zIndex: 10 }}
-      whileTap={{ scale: 0.95 }}
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{
-        duration: 0.2,
-        type: 'spring',
-        stiffness: 300,
-        damping: 20,
-      }}
       aria-label={
         hasMood && moodLabel
           ? `${dateStr}: ${moodLabel}`
@@ -68,34 +53,28 @@ export function GridCell({
       }
       title={hasMood && moodLabel ? `${dateStr} - ${moodLabel}` : dateStr}
     >
-      {isHovered && (
-        <motion.div
-          className={styles.tooltip}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-        >
-          <div className={styles.tooltipDate}>{dateStr}</div>
-          {moodLabel && (
-            <div className={styles.tooltipMood}>{moodLabel}</div>
-          )}
-        </motion.div>
-      )}
+      {/* Tooltip shown via CSS :hover */}
+      <div className={styles.tooltip}>
+        <div className={styles.tooltipDate}>{dateStr}</div>
+        {moodLabel && (
+          <div className={styles.tooltipMood}>{moodLabel}</div>
+        )}
+      </div>
       {isToday && (
-        <motion.div
-          className={styles.todayIndicator}
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.5, 1, 0.5],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
+        <div className={styles.todayIndicator} />
       )}
-    </motion.button>
+    </button>
   )
 }
+
+// Memoize to prevent re-renders when parent state changes
+export const GridCell = memo(GridCellBase, (prevProps, nextProps) => {
+  // Only re-render if relevant props change
+  return (
+    prevProps.mood === nextProps.mood &&
+    prevProps.hasMood === nextProps.hasMood &&
+    prevProps.isToday === nextProps.isToday &&
+    prevProps.date.getTime() === nextProps.date.getTime()
+  )
+})
 

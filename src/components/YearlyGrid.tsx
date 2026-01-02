@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useMoodData } from '@/hooks/useMoodData'
 import { formatDate, isToday, getDateInfo } from '@/utils/dateUtils'
@@ -16,26 +16,28 @@ interface YearlyGridProps {
 export function YearlyGrid({ year = new Date().getFullYear(), onCellClick }: YearlyGridProps) {
   const { getMood, hasMood, setMood } = useMoodData()
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
-  const [hoveredDate, setHoveredDate] = useState<string | null>(null)
 
-  // Generate year days
-  const yearDays: Date[] = []
-  const startDate = new Date(year, 0, 1)
-  const endDate = new Date(year, 11, 31)
-  
-  for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
-    yearDays.push(new Date(date))
-  }
-  
-  // Group days by month for grid layout
-  const months: { [month: number]: Date[] } = {}
-  yearDays.forEach((date) => {
-    const month = date.getMonth()
-    if (!months[month]) {
-      months[month] = []
+  // Memoize year days and months calculation - only recalculate when year changes
+  const months = useMemo(() => {
+    const yearDays: Date[] = []
+    const startDate = new Date(year, 0, 1)
+    const endDate = new Date(year, 11, 31)
+    
+    for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+      yearDays.push(new Date(date))
     }
-    months[month].push(date)
-  })
+    
+    const monthsMap: { [month: number]: Date[] } = {}
+    yearDays.forEach((date) => {
+      const month = date.getMonth()
+      if (!monthsMap[month]) {
+        monthsMap[month] = []
+      }
+      monthsMap[month].push(date)
+    })
+    
+    return monthsMap
+  }, [year])
 
   const handleCellClick = (date: Date) => {
     const dateStr = formatDate(date)
@@ -75,11 +77,17 @@ export function YearlyGrid({ year = new Date().getFullYear(), onCellClick }: Yea
       <div className={styles.grid}>
         {Object.entries(months).map(([monthIndex, days]) => {
           const monthNum = parseInt(monthIndex)
-          const monthName = days[0] ? getDateInfo(days[0]).monthAbbr : ''
+          const dateInfo = days[0] ? getDateInfo(days[0]) : null
+          const monthAbbr = dateInfo?.monthAbbr ?? ''
+          const monthFull = dateInfo?.monthName ?? ''
           
           return (
             <div key={monthNum} className={styles.monthColumn}>
-              <div className={styles.monthHeader}>{monthName}</div>
+              <div className={styles.monthHeader}>
+                <span className={styles.monthFull} aria-hidden="true">{monthAbbr}</span>
+                <span className={styles.monthShort} aria-hidden="true">{monthAbbr.charAt(0)}</span>
+                <span className="sr-only">{monthFull}</span>
+              </div>
               <div className={styles.daysColumn}>
                 {Array.from({ length: 31 }, (_, i) => {
                   const dayNum = i + 1
@@ -93,7 +101,6 @@ export function YearlyGrid({ year = new Date().getFullYear(), onCellClick }: Yea
                   const mood = getMood(dateStr)
                   const hasMoodLogged = hasMood(dateStr)
                   const isTodayCell = isToday(date)
-                  const isHovered = hoveredDate === dateStr
 
                   return (
                     <GridCell
@@ -102,10 +109,7 @@ export function YearlyGrid({ year = new Date().getFullYear(), onCellClick }: Yea
                       mood={mood}
                       hasMood={hasMoodLogged}
                       isToday={isTodayCell}
-                      isHovered={isHovered}
                       onClick={() => handleCellClick(date)}
-                      onHover={() => setHoveredDate(dateStr)}
-                      onLeave={() => setHoveredDate(null)}
                     />
                   )
                 })}

@@ -35,6 +35,7 @@ export function Legend() {
           <div key={value} className={styles.item}>
             <div
               className={styles.colorSwatch}
+              role="img"
               style={{
                 backgroundColor: getMoodColor(value, theme),
               }}

@@ -74,6 +74,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
+    minify: 'esbuild', // Enable JavaScript minification using esbuild
     rollupOptions: {
       output: {
         manualChunks: {
