@@ -36,9 +36,12 @@ function GridCellBase({
     ? getTodayHighlightColor(theme)
     : 'transparent'
 
+  const isEmpty = !hasMood || !mood
+  const cellClassName = isEmpty ? `${styles.cell} ${styles.empty}` : styles.cell
+
   return (
     <button
-      className={styles.cell}
+      className={cellClassName}
       style={{
         backgroundColor,
         borderColor,

@@ -5,7 +5,7 @@
   border-radius: 4px;
   cursor: pointer;
   position: relative;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
   padding: 0;
   background: none;
   border: none;
@@ -24,6 +24,10 @@
 .cell:focus {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+}
+
+.cell.empty:hover {
+  background-color: var(--color-hover-empty) !important;
 }
 
 .tooltip {

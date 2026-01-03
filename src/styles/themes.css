@@ -1,22 +1,44 @@
 /* Light theme (default) */
 :root,
 [data-theme="light"] {
-  --color-background: lch(98% 2 200);
-  --color-surface: lch(100% 0 200);
-  --color-text: lch(20% 5 200);
-  --color-text-secondary: lch(42% 5 200);
-  --color-border: lch(85% 5 200);
-  --color-primary: lch(60% 30 250);
+  --color-background: #F8FAFC; /* Slate 50 */
+  --color-surface: #FFFFFF;
+  --color-text: #1F2937; /* Gray 800 */
+  --color-text-secondary: #6B7280; /* Gray 500 */
+  --color-border: #e5e7eb; /* Gray 200 */
+  --color-primary: #4F46E5; /* Indigo 600 */
+  
+  /* Calendar & Layout */
+  --color-empty-cell: #f3f4f6; /* Gray 100 - Empty calendar cells */
+  --color-divider: #f3f4f6; /* Gray 100 - Header/Footer dividers */
+  --color-hover-empty: #c7d2fe; /* Indigo 200 */
+  
+  /* Hover states */
+  --color-hover-indigo: #EEF2FF; /* Indigo 50 */
+  
+  /* Inputs & Components */
+  --color-border-input: #e5e7eb; /* Gray 200 */
 }
 
 /* Dark theme */
 [data-theme="dark"] {
-  --color-background: lch(15% 5 200);
-  --color-surface: lch(20% 5 200);
-  --color-text: lch(95% 2 200);
-  --color-text-secondary: lch(70% 5 200);
-  --color-border: lch(30% 5 200);
-  --color-primary: lch(50% 25 250);
+  --color-background: #111827; /* Gray 900 */
+  --color-surface: #1F2937; /* Gray 800 */
+  --color-text: #F9FAFB; /* Near white */
+  --color-text-secondary: #9CA3AF; /* Gray 400 */
+  --color-border: #374151; /* Gray 700 */
+  --color-primary: #6366F1; /* Indigo 500 - lighter for better contrast */
+  
+  /* Calendar & Layout */
+  --color-empty-cell: #1F2937; /* Gray 800 */
+  --color-divider: #374151; /* Gray 700 - Header/Footer dividers */
+  --color-hover-empty: #4F46E5; /* Indigo 600 */
+  
+  /* Hover states */
+  --color-hover-indigo: #312E81; /* Indigo 900 */
+  
+  /* Inputs & Components */
+  --color-border-input: #374151; /* Gray 700 */
 }
 
 /* Ensure smooth theme transitions */

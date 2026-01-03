@@ -14,7 +14,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   
-  background: lch(55% 45 250);
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -24,7 +24,7 @@
 }
 
 .logButton:hover {
-  background: lch(50% 50 250);
+  background: #4338CA; /* Indigo 700 - darker shade for hover */
   transform: translateY(-1px);
 }
 
