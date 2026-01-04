@@ -6,6 +6,7 @@
   min-height: 60vh;
   padding: 2rem;
   gap: 2rem;
+  position: relative;
 }
 
 .title {
@@ -14,6 +15,8 @@
   color: var(--color-text);
   margin: 0;
   text-align: center;
+  position: relative;
+  z-index: 20;
 }
 
 .clusterContainer {
@@ -84,6 +87,8 @@
 .selectedMood {
   text-align: center;
   margin: 1rem 0;
+  position: relative;
+  z-index: 20;
 }
 
 .selectedMoodText {
@@ -101,6 +106,8 @@
   gap: 2rem;
   padding: 2rem 1rem;
   animation: fadeIn 0.3s ease-out;
+  position: relative;
+  z-index: 20;
 }
 
 @keyframes fadeIn {

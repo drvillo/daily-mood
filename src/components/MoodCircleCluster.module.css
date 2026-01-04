@@ -1,31 +1,17 @@
 .container {
-  position: relative;
-  width: min(600px, 90vw);
-  height: min(600px, 90vw);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.compactContainer {
-  position: relative;
-  width: min(350px, 70vw);
-  height: min(350px, 70vw);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.cluster {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
 }
 
 .circle {
-  position: absolute;
-  left: 50%;
-  top: 50%;
+  position: fixed;
+  pointer-events: auto;
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -39,6 +25,7 @@
     0 4px 12px rgba(0, 0, 0, 0.1),
     inset 0 2px 0 rgba(255, 255, 255, 0.2);
   transition: box-shadow 0.3s ease;
+  will-change: transform, left, top;
 }
 
 .circle:hover {
@@ -64,6 +51,7 @@
   transition: opacity 0.2s ease;
   max-width: 90%;
   word-wrap: break-word;
+  pointer-events: none;
 }
 
 .circle:hover .label {
@@ -84,16 +72,6 @@
 
 /* Mobile adjustments */
 @media (max-width: 480px) {
-  .container {
-    width: min(500px, 92vw);
-    height: min(500px, 92vw);
-  }
-
-  .compactContainer {
-    width: min(280px, 80vw);
-    height: min(280px, 80vw);
-  }
-
   .label {
     font-size: 0.75rem;
   }
@@ -101,34 +79,13 @@
 
 /* Larger screens */
 @media (min-width: 768px) {
-  .container {
-    width: min(650px, 75vw);
-    height: min(650px, 75vw);
-  }
-
-  .compactContainer {
-    width: min(400px, 60vw);
-    height: min(400px, 60vw);
-  }
-
   .label {
     font-size: 1rem;
   }
 }
 
 @media (min-width: 1200px) {
-  .container {
-    width: min(700px, 55vw);
-    height: min(700px, 55vw);
-  }
-
-  .compactContainer {
-    width: min(450px, 40vw);
-    height: min(450px, 40vw);
-  }
-
   .label {
     font-size: 1.1rem;
   }
 }
-

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useMoodData } from '@/hooks/useMoodData'
 import { useMoodFlash } from '@/hooks/useMoodFlash'
@@ -6,7 +6,7 @@ import { formatDate, formatDateLong, isToday, isFutureDate, getDateInfo } from '
 import { MOOD_LABELS } from '@/types'
 import type { Mood } from '@/types'
 import { GridCell } from './GridCell'
-import { MoodCircleCluster } from './MoodCircleCluster'
+import { MoodCircleCluster, type PhysicsConfig } from './MoodCircleCluster'
 import { MoodEntryOptions } from './MoodEntryOptions'
 import { MoodFlashOverlay } from './MoodFlashOverlay'
 import styles from './YearlyGrid.module.css'
@@ -22,6 +22,19 @@ export function YearlyGrid({ year = new Date().getFullYear(), onCellClick }: Yea
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [selectedMood, setSelectedMood] = useState<Mood | null>(null)
   const [entryData, setEntryData] = useState<{ comment?: string; photo?: string }>({})
+  
+  // Ref for constraining circle movement area in modal
+  const circleAreaRef = useRef<HTMLDivElement>(null)
+  
+  // Calmer physics config for modal - slower, gentler movement
+  const modalPhysicsConfig: PhysicsConfig = useMemo(() => ({
+    baseSpeed: 0.3,          // Much slower drift
+    damping: 0.98,           // More friction for smoother stops
+    bounceDamping: 0.5,      // Less bouncy
+    repulsionStrength: 0.08, // Gentler repulsion
+    repulsionThreshold: 80,  // Smaller repulsion range
+    margin: 10,              // Smaller margin for more space
+  }), [])
 
   // Memoize year days and months calculation - only recalculate when year changes
   const months = useMemo(() => {
@@ -209,7 +222,15 @@ export function YearlyGrid({ year = new Date().getFullYear(), onCellClick }: Yea
               <h3 id="modal-title" className={styles.modalTitle}>
               How did you feel on {formatDateLong(selectedDate)}?
               </h3>
-              <MoodCircleCluster onSelect={handleMoodSelect} compact selectedMood={selectedMood} />
+              <div ref={circleAreaRef} className={styles.circleArea}>
+                <MoodCircleCluster 
+                  onSelect={handleMoodSelect} 
+                  compact 
+                  selectedMood={selectedMood}
+                  boundsRef={circleAreaRef}
+                  physicsConfig={modalPhysicsConfig}
+                />
+              </div>
               <MoodEntryOptions
                 onCommentChange={handleCommentChange}
                 onPhotoCapture={handlePhotoCapture}

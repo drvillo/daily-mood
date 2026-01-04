@@ -1,6 +1,6 @@
 .toggleButtonWrapper {
   position: fixed;
-  bottom: calc(4rem + 10px); /* Increased spacing: 2rem base + 10px for scale/shadow clearance */
+  bottom: 1.5rem; /* Match View Year button Y position */
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
@@ -31,7 +31,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--spacing-lg) var(--spacing-md);
-  padding-bottom: calc(1.5rem + 48px + var(--spacing-md)); /* Account for toggle button */
+  padding-bottom: calc(1.5rem + 53px + var(--spacing-md)); /* Account for toggle button (1.5rem bottom + 53px button height) */
 
   display: flex;
   flex-direction: column;
@@ -62,12 +62,12 @@
 /* Mobile adjustments */
 @media (max-width: 480px) {
   .toggleButtonWrapper {
-    bottom: calc(max(4rem, calc(env(safe-area-inset-bottom, 0px) + 1rem)) + 10px);
+    bottom: 1rem; /* Match View Year button Y position on mobile */
   }
 
   .footerContent {
     padding: var(--spacing-md);
-    padding-bottom: calc(max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 1rem)) + 64px + var(--spacing-md));
+    padding-bottom: calc(1rem + 53px + var(--spacing-md)); /* Account for toggle button on mobile */
   }
 }
 
