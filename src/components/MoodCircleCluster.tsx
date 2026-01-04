@@ -1,5 +1,5 @@
-import { useCallback, useState, useRef } from 'react'
-import { motion, useSpring, useTransform, useAnimationFrame } from 'framer-motion'
+import { useCallback, useState, useRef, useEffect } from 'react'
+import { motion, useSpring, useTransform, useAnimationFrame, useMotionValue } from 'framer-motion'
 import { useTheme } from '@/hooks/useTheme'
 import { getMoodColor } from '@/utils/colorUtils'
 import { MOOD_LABELS } from '@/types'
@@ -14,10 +14,10 @@ interface MoodCircleClusterProps {
 
 // Cluster positions for organic arrangement - using viewport-relative sizes
 const CLUSTER_POSITIONS = [
-  { x: -90, y: -90, size: 140 },  // Great - top left
-  { x: 90, y: -90, size: 125 },   // Normal - top right
-  { x: -90, y: 90, size: 115 },   // Meh - bottom left
-  { x: 90, y: 90, size: 105 },    // Awful - bottom right
+  { x: -130, y: -130, size: 200 },  // Great - top left
+  { x: 130, y: -130, size: 180 },   // Normal - top right
+  { x: -130, y: 130, size: 170 },   // Meh - bottom left
+  { x: 130, y: 130, size: 160 },    // Awful - bottom right
 ]
 
 // Compact positions for modal (smaller sizes)
@@ -30,10 +30,10 @@ const COMPACT_CLUSTER_POSITIONS = [
 
 // Ambient movement parameters for each circle
 const AMBIENT_PARAMS = [
-  { speedX: 0.0008, speedY: 0.0011, radiusX: 15, radiusY: 12, phaseX: 0, phaseY: 0.5 },
-  { speedX: 0.0012, speedY: 0.0009, radiusX: 12, radiusY: 18, phaseX: 1.2, phaseY: 2.1 },
-  { speedX: 0.0010, speedY: 0.0013, radiusX: 18, radiusY: 14, phaseX: 2.5, phaseY: 1.0 },
-  { speedX: 0.0014, speedY: 0.0010, radiusX: 14, radiusY: 16, phaseX: 0.8, phaseY: 3.2 },
+  { speedX: 0.0008, speedY: 0.0011, radiusX: 20, radiusY: 16, phaseX: 0, phaseY: 0.5 },
+  { speedX: 0.0012, speedY: 0.0009, radiusX: 16, radiusY: 22, phaseX: 1.2, phaseY: 2.1 },
+  { speedX: 0.0010, speedY: 0.0013, radiusX: 22, radiusY: 18, phaseX: 2.5, phaseY: 1.0 },
+  { speedX: 0.0014, speedY: 0.0010, radiusX: 18, radiusY: 20, phaseX: 0.8, phaseY: 3.2 },
 ]
 
 export function MoodCircleCluster({ onSelect, compact = false, selectedMood = null }: MoodCircleClusterProps) {
@@ -67,8 +67,8 @@ export function MoodCircleCluster({ onSelect, compact = false, selectedMood = nu
     const offsetX = (e.clientX - centerX) / (rect.width / 2)
     const offsetY = (e.clientY - centerY) / (rect.height / 2)
     
-    mouseX.set(offsetX * 25)
-    mouseY.set(offsetY * 25)
+    mouseX.set(offsetX * 30)
+    mouseY.set(offsetY * 30)
   }, [mouseX, mouseY])
 
   const handleMouseEnter = useCallback(() => {
@@ -169,16 +169,84 @@ function MoodCircle({
   // Each circle moves based on mouse, with varying influence
   const influence = 1 - index * 0.1
   
-  // Combine ambient movement with mouse-based movement
-  const x = useTransform(mouseX, (mouseVal) => {
-    const dampened = ambientDampen.get()
-    return position.x + mouseVal * influence + ambientX * dampened
-  })
+  // Dynamic size that varies with movement (+/- 20 pixels)
+  const dynamicSize = useMotionValue(position.size)
   
-  const y = useTransform(mouseY, (mouseVal) => {
-    const dampened = ambientDampen.get()
-    return position.y + mouseVal * influence + ambientY * dampened
-  })
+  // Update size based on movement and time
+  useEffect(() => {
+    const unsubscribeX = mouseX.on('change', () => {
+      const mouseXVal = mouseX.get()
+      const mouseYVal = mouseY.get()
+      const dampened = ambientDampen.get()
+      
+      // Calculate movement distance from center
+      const mouseDistance = Math.sqrt(mouseXVal * mouseXVal + mouseYVal * mouseYVal)
+      const ambientDistance = Math.sqrt(ambientX * ambientX + ambientY * ambientY) * dampened
+      
+      // Combine movements and normalize to create size variation
+      // Use a sine wave based on time and movement for smooth oscillation
+      const movementFactor = (mouseDistance + ambientDistance) / 50
+      const timeBasedVariation = Math.sin(time * 0.001 + index) * 0.5
+      
+      // Combine both factors, limit to +/- 20 pixels
+      const variation = (movementFactor * 0.3 + timeBasedVariation * 0.7) * 20
+      const clampedVariation = Math.max(-20, Math.min(20, variation))
+      dynamicSize.set(position.size + clampedVariation)
+    })
+    
+    const unsubscribeY = mouseY.on('change', () => {
+      const mouseXVal = mouseX.get()
+      const mouseYVal = mouseY.get()
+      const dampened = ambientDampen.get()
+      
+      const mouseDistance = Math.sqrt(mouseXVal * mouseXVal + mouseYVal * mouseYVal)
+      const ambientDistance = Math.sqrt(ambientX * ambientX + ambientY * ambientY) * dampened
+      const movementFactor = (mouseDistance + ambientDistance) / 50
+      const timeBasedVariation = Math.sin(time * 0.001 + index) * 0.5
+      const variation = (movementFactor * 0.3 + timeBasedVariation * 0.7) * 20
+      const clampedVariation = Math.max(-20, Math.min(20, variation))
+      dynamicSize.set(position.size + clampedVariation)
+    })
+    
+    // Also update on time changes (for time-based variation)
+    const interval = setInterval(() => {
+      const mouseXVal = mouseX.get()
+      const mouseYVal = mouseY.get()
+      const dampened = ambientDampen.get()
+      
+      const mouseDistance = Math.sqrt(mouseXVal * mouseXVal + mouseYVal * mouseYVal)
+      const ambientDistance = Math.sqrt(ambientX * ambientX + ambientY * ambientY) * dampened
+      const movementFactor = (mouseDistance + ambientDistance) / 50
+      const timeBasedVariation = Math.sin(time * 0.001 + index) * 0.5
+      const variation = (movementFactor * 0.3 + timeBasedVariation * 0.7) * 20
+      const clampedVariation = Math.max(-20, Math.min(20, variation))
+      dynamicSize.set(position.size + clampedVariation)
+    }, 16) // ~60fps
+    
+    return () => {
+      unsubscribeX()
+      unsubscribeY()
+      clearInterval(interval)
+    }
+  }, [mouseX, mouseY, ambientDampen, time, index, position.size, ambientX, ambientY])
+
+  // Combine ambient movement with mouse-based movement
+  // Subtract half the dynamic size to center the circle (since left: 50% positions the top-left corner)
+  const x = useTransform(
+    [mouseX, dynamicSize],
+    ([mouseVal, currentSize]: [number, number]) => {
+      const dampened = ambientDampen.get()
+      return position.x - currentSize / 2 + mouseVal * influence + ambientX * dampened
+    }
+  )
+  
+  const y = useTransform(
+    [mouseY, dynamicSize],
+    ([mouseVal, currentSize]: [number, number]) => {
+      const dampened = ambientDampen.get()
+      return position.y - currentSize / 2 + mouseVal * influence + ambientY * dampened
+    }
+  )
 
   // Calculate scale based on hover and selected state
   const getScale = () => {
@@ -192,8 +260,8 @@ function MoodCircle({
     <motion.button
       className={styles.circle}
       style={{
-        width: position.size,
-        height: position.size,
+        width: dynamicSize,
+        height: dynamicSize,
         backgroundColor: getMoodColor(value, theme),
         x,
         y,

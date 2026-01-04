@@ -1,47 +1,86 @@
 .toggle {
-  position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
-  z-index: 100;
-  
-  width: 48px;
-  height: 48px;
-  padding: 0;
   
   font-size: 1.5rem;
   line-height: 1;
+}
+
+/* Inline variant for footer - matches NotificationSettings container */
+.themeSelector {
+  padding: 1.25rem;
+  background: var(--color-surface);
+  border-radius: 12px;
+  width: 100%;
+}
+
+.header {
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-text);
+}
+
+.options {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
   
-  background: color-mix(in srgb, var(--color-surface) 80%, transparent);
-  backdrop-filter: blur(10px);
+  background: var(--color-background);
   border: 1px solid var(--color-border);
-  border-radius: 50%;
+  border-radius: var(--radius-md);
   
   cursor: pointer;
   
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.1),
-    0 2px 4px rgba(0, 0, 0, 0.05);
-  
   transition: 
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    background-color var(--timing-normal) ease,
+    border-color var(--timing-normal) ease,
+    box-shadow var(--timing-normal) ease;
 }
 
-.toggle:hover {
+.option:hover:not(:disabled) {
   background: var(--color-surface);
-  box-shadow: 
-    0 6px 16px rgba(0, 0, 0, 0.15),
-    0 3px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
-.toggle:focus {
+.option:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+}
+
+.option:disabled {
+  cursor: default;
+  opacity: 0.5;
+  background: var(--color-background);
+}
+
+.optionActive {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.optionIcon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.optionLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
 }
 
 /* Mobile adjustments */
@@ -49,8 +88,6 @@
   .toggle {
     bottom: 1rem;
     right: 1rem;
-    width: 44px;
-    height: 44px;
     font-size: 1.25rem;
   }
 }

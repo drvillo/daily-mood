@@ -2,12 +2,9 @@ import {
   createContext,
   useContext,
   useState,
-  useEffect,
   useCallback,
   type ReactNode,
 } from 'react'
-import { useMoodData } from './useMoodData'
-import { getToday } from '@/utils/dateUtils'
 import type { ViewMode } from '@/types'
 
 interface ViewModeContextValue {
@@ -24,22 +21,10 @@ interface ViewModeProviderProps {
 
 /**
  * Provider for view mode state (Log vs Reflect)
- * Automatically determines initial mode based on whether today is logged
+ * Always starts in LogView mode
  */
 export function ViewModeProvider({ children }: ViewModeProviderProps) {
-  const { hasMood, isLoading } = useMoodData()
   const [viewMode, setViewMode] = useState<ViewMode>('log')
-  const [isInitialized, setIsInitialized] = useState(false)
-
-  // Determine initial view mode based on whether today is logged
-  useEffect(() => {
-    if (!isLoading && !isInitialized) {
-      const today = getToday()
-      const todayLogged = hasMood(today)
-      setViewMode(todayLogged ? 'reflect' : 'log')
-      setIsInitialized(true)
-    }
-  }, [hasMood, isLoading, isInitialized])
 
   const switchToLog = useCallback(() => {
     setViewMode('log')

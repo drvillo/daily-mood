@@ -1,0 +1,73 @@
+.toggleButtonWrapper {
+  position: fixed;
+  bottom: calc(4rem + 10px); /* Increased spacing: 2rem base + 10px for scale/shadow clearance */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  pointer-events: none;
+}
+
+.toggleButton {
+  pointer-events: auto;
+  color: var(--color-text);
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 99;
+
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+
+  max-width: 100%;
+  width: 100%;
+}
+
+.footerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-lg) var(--spacing-md);
+  padding-bottom: calc(1.5rem + 48px + var(--spacing-md)); /* Account for toggle button */
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.footerSection {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Desktop: horizontal layout */
+@media (min-width: 768px) {
+  .footerContent {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--spacing-xl);
+  }
+
+  .footerSection {
+    flex: 1 1 0;
+    min-width: 0; /* Allow flex items to shrink below content size */
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .toggleButtonWrapper {
+    bottom: calc(max(4rem, calc(env(safe-area-inset-bottom, 0px) + 1rem)) + 10px);
+  }
+
+  .footerContent {
+    padding: var(--spacing-md);
+    padding-bottom: calc(max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 1rem)) + 64px + var(--spacing-md));
+  }
+}
+

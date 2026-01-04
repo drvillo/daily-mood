@@ -1,7 +1,7 @@
 .container {
   position: relative;
-  width: min(450px, 85vw);
-  height: min(450px, 85vw);
+  width: min(600px, 90vw);
+  height: min(600px, 90vw);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,8 +26,6 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  margin-left: calc(-1 * var(--size, 80px) / 2);
-  margin-top: calc(-1 * var(--size, 80px) / 2);
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -87,8 +85,8 @@
 /* Mobile adjustments */
 @media (max-width: 480px) {
   .container {
-    width: min(350px, 90vw);
-    height: min(350px, 90vw);
+    width: min(500px, 92vw);
+    height: min(500px, 92vw);
   }
 
   .compactContainer {
@@ -97,15 +95,15 @@
   }
 
   .label {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
   }
 }
 
 /* Larger screens */
 @media (min-width: 768px) {
   .container {
-    width: min(520px, 70vw);
-    height: min(520px, 70vw);
+    width: min(650px, 75vw);
+    height: min(650px, 75vw);
   }
 
   .compactContainer {
@@ -114,14 +112,14 @@
   }
 
   .label {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 }
 
 @media (min-width: 1200px) {
   .container {
-    width: min(600px, 50vw);
-    height: min(600px, 50vw);
+    width: min(700px, 55vw);
+    height: min(700px, 55vw);
   }
 
   .compactContainer {
@@ -130,7 +128,7 @@
   }
 
   .label {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 }
 
