@@ -18,8 +18,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'icons/*.png', 'icons/*.jpg'],
       manifest: {
-        name: 'Yearly Mood Tracker',
-        short_name: 'Mood Tracker',
+        name: 'Mood in pixels',
+        short_name: 'Mood Pixels',
         description: 'A simple, visual mood tracking app with yearly grid view',
         theme_color: '#f0f4f8',
         background_color: '#f0f4f8',

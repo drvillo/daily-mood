@@ -1,4 +1,4 @@
-# Yearly Mood Tracker
+# Mood in pixels
 
 A simple, visual mood tracking web app with a yearly grid view. Built with React, Vite, and TypeScript.
 

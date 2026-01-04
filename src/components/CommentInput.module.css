@@ -1,0 +1,60 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.label {
+  display: block;
+  width: 100%;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 60px; /* Ensures 2 lines visible (line-height 1.5 * 16px * 2 + padding) */
+  max-height: 120px;
+  padding: 0.75rem;
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: none;
+  overflow-y: hidden; /* Prevent scrollbar on load */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb, 0, 0, 0), 0.1);
+}
+
+.textarea::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.6;
+}
+
+.counter {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  text-align: right;
+  padding-right: 0.25rem;
+}
+
+.counter.nearLimit {
+  color: var(--color-warning, #f59e0b);
+  font-weight: 600;
+}
+
+/* Mobile optimizations */
+@media (max-width: 480px) {
+  .textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 0.625rem;
+  }
+}
+

@@ -6,13 +6,17 @@ import {
   useCallback,
   type ReactNode,
 } from 'react'
-import { loadMoodData, saveMoodData, setMoodForDate } from '@/utils/storage'
+import { loadMoodData, saveMoodData, setMoodForDate, getMoodEntry } from '@/utils/storage'
+import { isFutureDate } from '@/utils/dateUtils'
 import type { Mood, MoodData } from '@/types'
+import { getMoodValue } from '@/types'
 
 interface MoodContextValue {
   moods: MoodData
-  setMood: (date: string, mood: Mood) => void
+  setMood: (date: string, mood: Mood, options?: { comment?: string; photo?: string }) => void
   getMood: (date: string) => Mood | null
+  getComment: (date: string) => string | null
+  getPhoto: (date: string) => string | null
   hasMood: (date: string) => boolean
   isLoading: boolean
   error: Error | null
@@ -62,13 +66,37 @@ export function MoodProvider({ children }: MoodProviderProps) {
     }
   }, [moods, isLoading])
 
-  const setMood = useCallback((date: string, mood: Mood) => {
-    setMoods((prev) => setMoodForDate(prev, date, mood))
+  const setMood = useCallback((date: string, mood: Mood, options?: { comment?: string; photo?: string }) => {
+    // Prevent setting mood for future dates
+    if (isFutureDate(date)) {
+      console.warn('Cannot set mood for future date:', date)
+      return
+    }
+    
+    setMoods((prev) => setMoodForDate(prev, date, mood, options))
   }, [])
 
   const getMood = useCallback(
     (date: string): Mood | null => {
-      return (moods[date] as Mood) || null
+      const entry = moods[date]
+      if (!entry) return null
+      return getMoodValue(entry)
+    },
+    [moods]
+  )
+
+  const getComment = useCallback(
+    (date: string): string | null => {
+      const entry = getMoodEntry(moods, date)
+      return entry?.comment || null
+    },
+    [moods]
+  )
+
+  const getPhoto = useCallback(
+    (date: string): string | null => {
+      const entry = getMoodEntry(moods, date)
+      return entry?.photo || null
     },
     [moods]
   )
@@ -84,6 +112,8 @@ export function MoodProvider({ children }: MoodProviderProps) {
     moods,
     setMood,
     getMood,
+    getComment,
+    getPhoto,
     hasMood,
     isLoading,
     error,
@@ -102,4 +132,5 @@ export function useMoodData(): MoodContextValue {
   }
   return context
 }
+
 

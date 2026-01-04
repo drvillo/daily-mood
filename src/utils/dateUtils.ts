@@ -28,6 +28,18 @@ export function isToday(date: Date): boolean {
 }
 
 /**
+ * Check if date is in the future
+ */
+export function isFutureDate(date: Date | string): boolean {
+  const dateObj = typeof date === 'string' ? parseDate(date) : date
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const compareDate = new Date(dateObj)
+  compareDate.setHours(0, 0, 0, 0)
+  return compareDate > today
+}
+
+/**
  * Get today's date as YYYY-MM-DD
  */
 export function getToday(): string {
@@ -115,5 +127,17 @@ export function getDateInfo(date: Date) {
     monthAbbr: getMonthAbbr(date),
     dayOfYear: getDayOfYear(date),
   }
+}
+
+/**
+ * Format date string (YYYY-MM-DD) as English words (e.g., "January 4, 2026")
+ */
+export function formatDateLong(dateString: string): string {
+  const date = parseDate(dateString)
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
 }
 

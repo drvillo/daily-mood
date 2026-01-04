@@ -9,6 +9,7 @@ import styles from './MoodCircleCluster.module.css'
 interface MoodCircleClusterProps {
   onSelect: (mood: Mood) => void
   compact?: boolean
+  selectedMood?: Mood | null
 }
 
 // Cluster positions for organic arrangement - using viewport-relative sizes
@@ -35,7 +36,7 @@ const AMBIENT_PARAMS = [
   { speedX: 0.0014, speedY: 0.0010, radiusX: 14, radiusY: 16, phaseX: 0.8, phaseY: 3.2 },
 ]
 
-export function MoodCircleCluster({ onSelect, compact = false }: MoodCircleClusterProps) {
+export function MoodCircleCluster({ onSelect, compact = false, selectedMood = null }: MoodCircleClusterProps) {
   const { theme } = useTheme()
   const containerRef = useRef<HTMLDivElement>(null)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
@@ -95,6 +96,7 @@ export function MoodCircleCluster({ onSelect, compact = false }: MoodCircleClust
           const ambient = AMBIENT_PARAMS[index]
           const isHovered = hoveredIndex === index
           const isOtherHovered = hoveredIndex !== null && hoveredIndex !== index
+          const isSelected = selectedMood === value
           
           return (
             <MoodCircle
@@ -106,6 +108,7 @@ export function MoodCircleCluster({ onSelect, compact = false }: MoodCircleClust
               index={index}
               isHovered={isHovered}
               isOtherHovered={isOtherHovered}
+              isSelected={isSelected}
               theme={theme}
               mouseX={mouseX}
               mouseY={mouseY}
@@ -130,6 +133,7 @@ interface MoodCircleProps {
   index: number
   isHovered: boolean
   isOtherHovered: boolean
+  isSelected: boolean
   theme: 'light' | 'dark'
   mouseX: ReturnType<typeof useSpring>
   mouseY: ReturnType<typeof useSpring>
@@ -148,6 +152,7 @@ function MoodCircle({
   index,
   isHovered,
   isOtherHovered,
+  isSelected,
   theme,
   mouseX,
   mouseY,
@@ -175,9 +180,10 @@ function MoodCircle({
     return position.y + mouseVal * influence + ambientY * dampened
   })
 
-  // Calculate scale based on hover state
+  // Calculate scale based on hover and selected state
   const getScale = () => {
     if (isHovered) return 1.25
+    if (isSelected) return 1.15
     if (isOtherHovered) return 0.8
     return 1
   }
@@ -192,6 +198,9 @@ function MoodCircle({
         x,
         y,
         zIndex: isHovered ? 10 : 1,
+        ...(isSelected && {
+          boxShadow: '0 0 0 3px var(--color-primary)',
+        }),
       }}
       onClick={() => onSelect(value)}
       onMouseEnter={onHover}

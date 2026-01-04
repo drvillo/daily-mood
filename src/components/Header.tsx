@@ -38,7 +38,7 @@ export function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.container}>
-        <h1 className={styles.title}>Yearly Mood Tracker</h1>
+        <h1 className={styles.title}>Mood in pixels</h1>
         <div className={styles.actions}>
           <button
             className={styles.button}

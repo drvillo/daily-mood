@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useRef } from 'react'
 import { HashRouter, Routes, Route } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { MoodProvider } from '@/hooks/useMoodData'
 import { ViewModeProvider, useViewMode } from '@/hooks/useViewMode'
-import { useTheme } from '@/hooks/useTheme'
+import { useMoodFlash } from '@/hooks/useMoodFlash'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { MoodSelector } from '@/components/MoodSelector'
 import { YearlyGrid } from '@/components/YearlyGrid'
@@ -12,7 +12,7 @@ import { Legend } from '@/components/Legend'
 import { ProgressIndicator } from '@/components/ProgressIndicator'
 import { SidebarActions } from '@/components/SidebarActions'
 import { DataActions } from '@/components/DataActions'
-import { getMoodColor } from '@/utils/colorUtils'
+import { MoodFlashOverlay } from '@/components/MoodFlashOverlay'
 import type { Mood } from '@/types'
 import styles from './App.module.css'
 
@@ -22,20 +22,63 @@ interface LogViewProps {
 
 function LogView({ onMoodSelect }: LogViewProps) {
   const { switchToReflect } = useViewMode()
+  const viewSwitchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const isInteractingRef = useRef(false)
 
   const handleMoodSelect = (mood: Mood) => {
     // Trigger flash effect in parent
     onMoodSelect(mood)
 
-    // Small delay to show success animation before switching
-    setTimeout(() => {
-      switchToReflect()
-    }, 300)
+    // Clear any existing timeout
+    if (viewSwitchTimeoutRef.current) {
+      clearTimeout(viewSwitchTimeoutRef.current)
+    }
+
+    // The prompt timeout (4 seconds) is handled by MoodSelector
+    // If user doesn't respond, we'll navigate after 4 seconds
+    viewSwitchTimeoutRef.current = setTimeout(() => {
+      if (!isInteractingRef.current) {
+        switchToReflect()
+      }
+    }, 4000)
+  }
+
+  const handleInteractionStart = () => {
+    isInteractingRef.current = true
+    // Cancel any pending view switch
+    if (viewSwitchTimeoutRef.current) {
+      clearTimeout(viewSwitchTimeoutRef.current)
+      viewSwitchTimeoutRef.current = null
+    }
+  }
+
+  const handleInteractionEnd = () => {
+    isInteractingRef.current = false
+    // Schedule view switch after a delay when interaction ends
+    viewSwitchTimeoutRef.current = setTimeout(() => {
+      if (!isInteractingRef.current) {
+        switchToReflect()
+      }
+    }, 2000)
+  }
+
+  const handleSkip = () => {
+    // User clicked "Skip" - navigate immediately
+    if (viewSwitchTimeoutRef.current) {
+      clearTimeout(viewSwitchTimeoutRef.current)
+      viewSwitchTimeoutRef.current = null
+    }
+    switchToReflect()
   }
 
   return (
     <div className={styles.logView}>
-      <MoodSelector onSelect={handleMoodSelect} />
+      <MoodSelector 
+        onSelect={handleMoodSelect}
+        onInteractionStart={handleInteractionStart}
+        onInteractionEnd={handleInteractionEnd}
+        onSkip={handleSkip}
+      />
       <button
         className={styles.viewYearLink}
         onClick={switchToReflect}
@@ -48,18 +91,44 @@ function LogView({ onMoodSelect }: LogViewProps) {
 }
 
 function ReflectView() {
+  const { switchToLog } = useViewMode()
   const handleCellClick = () => {
     // Mood selection is handled by YearlyGrid component
+  }
+
+  const scrollToProgress = () => {
+    const progressElement = document.getElementById('progress-indicator')
+    if (progressElement) {
+      progressElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }
   }
 
   return (
     <div className={styles.reflectView}>
       <div className={styles.mainContent}>
+        <div className={styles.calendarHeader}>
+          <button
+            className={styles.calendarHeaderButton}
+            onClick={switchToLog}
+            aria-label="Log today's mood"
+          >
+            Log Today's Mood
+          </button>
+          <button
+            className={styles.progressLink}
+            onClick={scrollToProgress}
+            aria-label="Stats"
+          >
+            View your stats
+          </button>
+        </div>
         <YearlyGrid onCellClick={handleCellClick} />
       </div>
       <div className={styles.sidebar}>
         <SidebarActions />
-        <ProgressIndicator />
+        <div id="progress-indicator">
+          <ProgressIndicator />
+        </div>
         <Legend />
         <DataActions />
       </div>
@@ -69,17 +138,10 @@ function ReflectView() {
 
 function AppContent() {
   const { viewMode } = useViewMode()
-  const { theme } = useTheme()
-  const [flashMood, setFlashMood] = useState<Mood | null>(null)
+  const { flashMood, triggerFlash } = useMoodFlash()
 
   const handleMoodSelect = (mood: Mood) => {
-    // Trigger flash effect
-    setFlashMood(mood)
-    
-    // Clear flash after 2 seconds
-    setTimeout(() => {
-      setFlashMood(null)
-    }, 2000)
+    triggerFlash(mood)
   }
 
   return (
@@ -115,28 +177,7 @@ function AppContent() {
       <ThemeToggle />
       
       {/* Flash overlay effect - persists across view changes */}
-      <AnimatePresence>
-        {flashMood && (
-          <motion.div
-            className={styles.flashOverlay}
-            style={{
-              backgroundColor: getMoodColor(flashMood, theme),
-            }}
-            initial={{ opacity: 0, scale: 0.98, y: 0 }}
-            animate={{
-              opacity: [0, 0.25, 0.2, 0],
-              scale: [0.98, 1.02, 1.01, 1],
-              y: [0, -5, 0, 0],
-            }}
-            transition={{
-              duration: 2,
-              times: [0, 0.1, 0.3, 1],
-              ease: ['easeOut', 'easeInOut', 'easeIn'],
-            }}
-            aria-hidden="true"
-          />
-        )}
-      </AnimatePresence>
+      <MoodFlashOverlay flashMood={flashMood} />
     </div>
   )
 }
