@@ -39,32 +39,34 @@
   font-size: 0.9rem;
   font-weight: 500;
   
-  background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+  background: rgba(67, 56, 202, 0.8);
   backdrop-filter: blur(8px);
   border: none;
   border-radius: 8px;
   
-  color: var(--color-text-secondary);
+  color: white;
   cursor: pointer;
   transition: all 0.2s ease;
+  filter: saturate(0.8);
 }
 
 .viewYearLink:hover {
-  color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-surface) 85%, transparent);
+  background: rgba(67, 56, 202, 0.9);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  filter: saturate(0.8);
 }
 
 .viewYearLink:active {
   transform: translateY(0);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  filter: saturate(0.8);
 }
 
 .viewYearLink:focus {
-  outline: none;
-  color: var(--color-primary);
-  text-decoration: underline;
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  filter: saturate(0.8);
 }
 
 .reflectView {
@@ -94,36 +96,38 @@
   font-size: 0.9rem;
   font-weight: 500;
   
-  background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+  background: rgba(67, 56, 202, 0.8);
   backdrop-filter: blur(8px);
   border: none;
   border-radius: 8px;
   
-  color: var(--color-text-secondary);
+  color: white;
   cursor: pointer;
   transition: all 0.2s ease;
+  filter: saturate(0.8);
 }
 
 .calendarHeaderButton:hover {
-  color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-surface) 85%, transparent);
+  background: rgba(67, 56, 202, 0.9);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  filter: saturate(0.8);
 }
 
 .calendarHeaderButton:active {
   transform: translateY(0);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  filter: saturate(0.8);
 }
 
 .calendarHeaderButton:focus {
-  outline: none;
-  color: var(--color-primary);
-  text-decoration: underline;
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  filter: saturate(0.8);
 }
 
 .progressLink {
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0;
   font-size: 0.9rem;
   font-weight: 500;
   
@@ -133,15 +137,9 @@
   color: var(--color-text-secondary);
   cursor: pointer;
   transition: color 0.2s ease;
-  text-decoration: none;
 }
 
 .progressLink:hover {
-  color: var(--color-primary);
-  text-decoration: underline;
-}
-
-.progressLink:active {
   color: var(--color-primary);
 }
 

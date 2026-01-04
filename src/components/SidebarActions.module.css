@@ -4,18 +4,20 @@
   font-size: 0.875rem;
   font-weight: 600;
   
-  background: var(--color-primary);
+  background: rgba(67, 56, 202, 0.8);
   color: white;
   border: none;
   border-radius: 8px;
   
   cursor: pointer;
   transition: all 0.2s ease;
+  filter: saturate(0.8);
 }
 
 .logButton:hover {
-  background: #4338CA; /* Indigo 700 - darker shade for hover */
+  background: rgba(67, 56, 202, 0.9);
   transform: translateY(-1px);
+  filter: saturate(0.8);
 }
 
 .logButton:focus {

@@ -119,7 +119,7 @@ function ReflectView() {
             onClick={scrollToProgress}
             aria-label="Stats"
           >
-            View your stats
+            View your stats ↓
           </button>
         </div>
         <YearlyGrid onCellClick={handleCellClick} />
