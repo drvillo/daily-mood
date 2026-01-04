@@ -1,0 +1,160 @@
+.container {
+  padding: 1.25rem;
+  background: var(--color-surface);
+  border-radius: 12px;
+}
+
+.header {
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+  color: var(--color-text);
+}
+
+.description {
+  font-size: 0.875rem;
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggleLabel:has(.toggle:disabled) {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.toggle {
+  width: 2.5rem;
+  height: 1.25rem;
+  position: relative;
+  appearance: none;
+  background: var(--color-border);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.toggle:checked {
+  background: var(--color-primary);
+}
+
+.toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.toggle::before {
+  content: '';
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: white;
+  top: 50%;
+  left: 0.125rem;
+  transform: translateY(-50%);
+  transition: transform 0.2s;
+}
+
+.toggle:checked::before {
+  transform: translateY(-50%) translateX(1.125rem);
+}
+
+.toggleText {
+  font-size: 0.875rem;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.permissionSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--color-background);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.permissionStatus {
+  font-size: 0.875rem;
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.requestButton {
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  
+  background: rgba(67, 56, 202, 0.8);
+  backdrop-filter: blur(8px);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  
+  cursor: pointer;
+  transition: all 0.2s ease;
+  filter: saturate(0.8);
+}
+
+.requestButton:hover {
+  background: rgba(67, 56, 202, 0.9);
+  transform: translateY(-1px);
+  filter: saturate(0.8);
+}
+
+.requestButton:active {
+  transform: translateY(0);
+  filter: saturate(0.8);
+}
+
+.requestButton:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  filter: saturate(0.8);
+}
+
+.deniedHelp {
+  font-size: 0.75rem;
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.activeStatus {
+  font-size: 0.875rem;
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  padding: 0.75rem;
+  background: var(--color-background);
+  border-radius: 8px;
+}
+
+.unsupported {
+  font-size: 0.875rem;
+  margin: 0;
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 0.5rem;
+}
+

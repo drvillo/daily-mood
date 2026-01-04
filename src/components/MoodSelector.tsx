@@ -17,7 +17,7 @@ interface MoodSelectorProps {
 type PromptState = 'none' | 'prompt' | 'options'
 
 export function MoodSelector({ onSelect, onInteractionStart, onInteractionEnd, onSkip }: MoodSelectorProps) {
-  const { setMood, hasMood } = useMoodData()
+  const { setMood } = useMoodData()
   const today = getToday()
   const [selectedMood, setSelectedMood] = useState<Mood | null>(null)
   const [promptState, setPromptState] = useState<PromptState>('none')
@@ -26,9 +26,6 @@ export function MoodSelector({ onSelect, onInteractionStart, onInteractionEnd, o
   const promptTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const promptStateRef = useRef<PromptState>('none')
-  
-  // Check if today already has a mood logged
-  const hasMoodToday = hasMood(today)
   
   // Keep ref in sync with state
   useEffect(() => {
@@ -206,7 +203,7 @@ export function MoodSelector({ onSelect, onInteractionStart, onInteractionEnd, o
 
   return (
     <div className={styles.container}>
-      {!hasMoodToday && !selectedMood && (
+      {!selectedMood && (
         <h2 className={styles.title}>How are you feeling today?</h2>
       )}
       {!selectedMood ? (

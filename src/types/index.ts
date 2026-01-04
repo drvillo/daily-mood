@@ -23,6 +23,11 @@ export type Theme = 'light' | 'dark'
 
 export type ViewMode = 'log' | 'reflect'
 
+export interface NotificationPreferences {
+  enabled: boolean
+  permission: NotificationPermission
+}
+
 export interface MoodLabel {
   value: Mood
   label: string

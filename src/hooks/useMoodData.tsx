@@ -10,6 +10,7 @@ import { loadMoodData, saveMoodData, setMoodForDate, getMoodEntry } from '@/util
 import { isFutureDate } from '@/utils/dateUtils'
 import type { Mood, MoodData } from '@/types'
 import { getMoodValue } from '@/types'
+import { syncMoodDataWithServiceWorker } from '@/hooks/useNotifications'
 
 interface MoodContextValue {
   moods: MoodData
@@ -42,6 +43,8 @@ export function MoodProvider({ children }: MoodProviderProps) {
       const data = loadMoodData()
       setMoods(data.moods)
       setError(null)
+      // Sync with service worker on initial load
+      syncMoodDataWithServiceWorker(data.moods)
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to load mood data'))
     } finally {
@@ -59,6 +62,9 @@ export function MoodProvider({ children }: MoodProviderProps) {
         })
         if (!success) {
           setError(new Error('Failed to save mood data'))
+        } else {
+          // Sync with service worker whenever moods change
+          syncMoodDataWithServiceWorker(moods)
         }
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to save mood data'))

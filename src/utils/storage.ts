@@ -1,7 +1,8 @@
-import type { StorageData, MoodData, Mood, MoodEntry } from '@/types'
+import type { StorageData, MoodData, Mood, MoodEntry, NotificationPreferences } from '@/types'
 import { isMoodEntry, getMoodValue } from '@/types'
 
 const STORAGE_KEY = 'mood-tracker-data'
+const NOTIFICATION_PREFS_KEY = 'notification-preferences'
 const CURRENT_VERSION = '1.0'
 
 const DEFAULT_DATA: StorageData = {
@@ -195,5 +196,50 @@ export function warnIfNearQuota(data: StorageData, threshold: number = 0.8): boo
     console.warn('Failed to check quota:', error)
     return false
   }
+}
+
+/**
+ * Default notification preferences
+ */
+const DEFAULT_NOTIFICATION_PREFS: NotificationPreferences = {
+  enabled: false,
+  permission: 'default',
+}
+
+/**
+ * Load notification preferences from localStorage
+ */
+export function loadNotificationPreferences(): NotificationPreferences {
+  const stored = safeGetItem(NOTIFICATION_PREFS_KEY)
+  
+  if (!stored) {
+    return DEFAULT_NOTIFICATION_PREFS
+  }
+
+  try {
+    const parsed = JSON.parse(stored) as NotificationPreferences
+    
+    // Validate structure
+    if (
+      typeof parsed.enabled !== 'boolean' ||
+      !['default', 'granted', 'denied'].includes(parsed.permission)
+    ) {
+      console.warn('Invalid notification preferences structure, using defaults')
+      return DEFAULT_NOTIFICATION_PREFS
+    }
+
+    return parsed
+  } catch (error) {
+    console.error('Failed to parse notification preferences:', error)
+    return DEFAULT_NOTIFICATION_PREFS
+  }
+}
+
+/**
+ * Save notification preferences to localStorage
+ */
+export function saveNotificationPreferences(prefs: NotificationPreferences): boolean {
+  const serialized = JSON.stringify(prefs)
+  return safeSetItem(NOTIFICATION_PREFS_KEY, serialized)
 }
 

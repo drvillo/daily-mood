@@ -17,6 +17,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'prompt',
       injectRegister: null, // Disable auto-injection, we handle registration manually
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       includeAssets: ['favicon.ico', 'icons/*.png', 'icons/*.jpg'],
       manifest: {
         name: 'Mood in pixels',

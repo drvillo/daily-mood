@@ -1,10 +1,13 @@
 import { useRef } from 'react'
 import { HashRouter, Routes, Route } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useEffect } from 'react'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { MoodProvider } from '@/hooks/useMoodData'
 import { ViewModeProvider, useViewMode } from '@/hooks/useViewMode'
 import { useMoodFlash } from '@/hooks/useMoodFlash'
+import { useNotifications } from '@/hooks/useNotifications'
+import { useServiceWorkerUpdate } from '@/hooks/useServiceWorkerUpdate'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { MoodSelector } from '@/components/MoodSelector'
 import { YearlyGrid } from '@/components/YearlyGrid'
@@ -12,6 +15,7 @@ import { Legend } from '@/components/Legend'
 import { ProgressIndicator } from '@/components/ProgressIndicator'
 import { SidebarActions } from '@/components/SidebarActions'
 import { DataActions } from '@/components/DataActions'
+import { NotificationSettings } from '@/components/NotificationSettings'
 import { MoodFlashOverlay } from '@/components/MoodFlashOverlay'
 import type { Mood } from '@/types'
 import styles from './App.module.css'
@@ -126,6 +130,7 @@ function ReflectView() {
       </div>
       <div className={styles.sidebar}>
         <SidebarActions />
+        <NotificationSettings />
         <div id="progress-indicator">
           <ProgressIndicator />
         </div>
@@ -139,6 +144,24 @@ function ReflectView() {
 function AppContent() {
   const { viewMode } = useViewMode()
   const { flashMood, triggerFlash } = useMoodFlash()
+  const { isEnabled } = useNotifications()
+
+  // Initialize service worker update handler
+  useServiceWorkerUpdate()
+
+  // Sync notification settings with service worker on mount and when it changes
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then((registration) => {
+        if (registration.active) {
+          registration.active.postMessage({
+            type: 'NOTIFICATION_SETTINGS',
+            data: { enabled: isEnabled },
+          })
+        }
+      })
+    }
+  }, [isEnabled])
 
   const handleMoodSelect = (mood: Mood) => {
     triggerFlash(mood)
