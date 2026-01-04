@@ -17,13 +17,18 @@ interface MoodSelectorProps {
 type PromptState = 'none' | 'prompt' | 'options'
 
 export function MoodSelector({ onSelect, onInteractionStart, onInteractionEnd, onSkip }: MoodSelectorProps) {
-  const { setMood } = useMoodData()
+  const { setMood, hasMood } = useMoodData()
   const today = getToday()
   const [selectedMood, setSelectedMood] = useState<Mood | null>(null)
   const [promptState, setPromptState] = useState<PromptState>('none')
   const [entryData, setEntryData] = useState<{ comment?: string; photo?: string }>({})
+  const [countdown, setCountdown] = useState<number>(4)
   const promptTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const promptStateRef = useRef<PromptState>('none')
+  
+  // Check if today already has a mood logged
+  const hasMoodToday = hasMood(today)
   
   // Keep ref in sync with state
   useEffect(() => {
@@ -36,10 +41,14 @@ export function MoodSelector({ onSelect, onInteractionStart, onInteractionEnd, o
     setSelectedMood(mood)
     setEntryData({})
     setPromptState('prompt')
+    setCountdown(4) // Reset countdown to 4 seconds
     
-    // Clear any existing timeout
+    // Clear any existing timeout and interval
     if (promptTimeoutRef.current) {
       clearTimeout(promptTimeoutRef.current)
+    }
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current)
     }
     
     // Trigger callback immediately for flash effect
@@ -55,10 +64,14 @@ export function MoodSelector({ onSelect, onInteractionStart, onInteractionEnd, o
   }, [setMood, today, onSelect, onSkip])
 
   const handleYesClick = useCallback(() => {
-    // Clear timeout
+    // Clear timeout and countdown interval
     if (promptTimeoutRef.current) {
       clearTimeout(promptTimeoutRef.current)
       promptTimeoutRef.current = null
+    }
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current)
+      countdownIntervalRef.current = null
     }
     
     // Show options
@@ -67,10 +80,14 @@ export function MoodSelector({ onSelect, onInteractionStart, onInteractionEnd, o
   }, [onInteractionStart])
 
   const handleNoClick = useCallback(() => {
-    // Clear timeout
+    // Clear timeout and countdown interval
     if (promptTimeoutRef.current) {
       clearTimeout(promptTimeoutRef.current)
       promptTimeoutRef.current = null
+    }
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current)
+      countdownIntervalRef.current = null
     }
     
     // Navigate to reflect mode immediately
@@ -124,11 +141,49 @@ export function MoodSelector({ onSelect, onInteractionStart, onInteractionEnd, o
     }
   }, [selectedMood, entryData, promptState, updateMoodEntry])
 
-  // Cleanup timeout on unmount
+  // Start countdown when prompt state is active
+  useEffect(() => {
+    if (promptState === 'prompt') {
+      // Reset countdown to 4
+      setCountdown(4)
+      
+      // Start countdown interval
+      countdownIntervalRef.current = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            if (countdownIntervalRef.current) {
+              clearInterval(countdownIntervalRef.current)
+              countdownIntervalRef.current = null
+            }
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
+      
+      return () => {
+        if (countdownIntervalRef.current) {
+          clearInterval(countdownIntervalRef.current)
+          countdownIntervalRef.current = null
+        }
+      }
+    } else {
+      // Clear interval when not in prompt state
+      if (countdownIntervalRef.current) {
+        clearInterval(countdownIntervalRef.current)
+        countdownIntervalRef.current = null
+      }
+    }
+  }, [promptState])
+
+  // Cleanup timeout and interval on unmount
   useEffect(() => {
     return () => {
       if (promptTimeoutRef.current) {
         clearTimeout(promptTimeoutRef.current)
+      }
+      if (countdownIntervalRef.current) {
+        clearInterval(countdownIntervalRef.current)
       }
     }
   }, [])
@@ -151,7 +206,9 @@ export function MoodSelector({ onSelect, onInteractionStart, onInteractionEnd, o
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>How are you feeling today?</h2>
+      {!hasMoodToday && !selectedMood && (
+        <h2 className={styles.title}>How are you feeling today?</h2>
+      )}
       {!selectedMood ? (
         <MoodCircleCluster onSelect={handleSelect} />
       ) : promptState === 'prompt' ? (
@@ -168,9 +225,9 @@ export function MoodSelector({ onSelect, onInteractionStart, onInteractionEnd, o
             <button
               onClick={handleNoClick}
               className={`${styles.promptButton} ${styles.promptButtonNo}`}
-              aria-label="No, skip"
+              aria-label={`No, skip (${countdown}s)`}
             >
-              Skip
+              Skip {countdown > 0 && `(${countdown}s)`}
             </button>
           </div>
         </div>

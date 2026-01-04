@@ -15,7 +15,8 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
+      injectRegister: null, // Disable auto-injection, we handle registration manually
       includeAssets: ['favicon.ico', 'icons/*.png', 'icons/*.jpg'],
       manifest: {
         name: 'Mood in pixels',
