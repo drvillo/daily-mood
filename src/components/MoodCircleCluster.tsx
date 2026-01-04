@@ -1,5 +1,5 @@
-import { useCallback, useState, useRef, useEffect } from 'react'
-import { motion, useSpring, useTransform, useAnimationFrame, useMotionValue } from 'framer-motion'
+import { useCallback, useState, useRef } from 'react'
+import { motion, useSpring, useAnimationFrame, useMotionValue } from 'framer-motion'
 import { useTheme } from '@/hooks/useTheme'
 import { getMoodColor } from '@/utils/colorUtils'
 import { MOOD_LABELS } from '@/types'
@@ -162,91 +162,46 @@ function MoodCircle({
   onHover,
   onLeave,
 }: MoodCircleProps) {
-  // Calculate ambient floating position
-  const ambientX = Math.sin(time * ambientParams.speedX + ambientParams.phaseX) * ambientParams.radiusX
-  const ambientY = Math.cos(time * ambientParams.speedY + ambientParams.phaseY) * ambientParams.radiusY
-
   // Each circle moves based on mouse, with varying influence
   const influence = 1 - index * 0.1
   
-  // Dynamic size that varies with movement (+/- 20 pixels)
+  // Dynamic size and position motion values
   const dynamicSize = useMotionValue(position.size)
+  const x = useMotionValue(position.x - position.size / 2)
+  const y = useMotionValue(position.y - position.size / 2)
+  const localTimeRef = useRef(time)
+  localTimeRef.current = time
   
-  // Update size based on movement and time
-  useEffect(() => {
-    const unsubscribeX = mouseX.on('change', () => {
-      const mouseXVal = mouseX.get()
-      const mouseYVal = mouseY.get()
-      const dampened = ambientDampen.get()
-      
-      // Calculate movement distance from center
-      const mouseDistance = Math.sqrt(mouseXVal * mouseXVal + mouseYVal * mouseYVal)
-      const ambientDistance = Math.sqrt(ambientX * ambientX + ambientY * ambientY) * dampened
-      
-      // Combine movements and normalize to create size variation
-      // Use a sine wave based on time and movement for smooth oscillation
-      const movementFactor = (mouseDistance + ambientDistance) / 50
-      const timeBasedVariation = Math.sin(time * 0.001 + index) * 0.5
-      
-      // Combine both factors, limit to +/- 20 pixels
-      const variation = (movementFactor * 0.3 + timeBasedVariation * 0.7) * 20
-      const clampedVariation = Math.max(-20, Math.min(20, variation))
-      dynamicSize.set(position.size + clampedVariation)
-    })
+  // Update size and position based on movement and time using animation frame
+  useAnimationFrame(() => {
+    const mouseXVal = mouseX.get()
+    const mouseYVal = mouseY.get()
+    const dampened = ambientDampen.get()
+    const currentTime = localTimeRef.current
     
-    const unsubscribeY = mouseY.on('change', () => {
-      const mouseXVal = mouseX.get()
-      const mouseYVal = mouseY.get()
-      const dampened = ambientDampen.get()
-      
-      const mouseDistance = Math.sqrt(mouseXVal * mouseXVal + mouseYVal * mouseYVal)
-      const ambientDistance = Math.sqrt(ambientX * ambientX + ambientY * ambientY) * dampened
-      const movementFactor = (mouseDistance + ambientDistance) / 50
-      const timeBasedVariation = Math.sin(time * 0.001 + index) * 0.5
-      const variation = (movementFactor * 0.3 + timeBasedVariation * 0.7) * 20
-      const clampedVariation = Math.max(-20, Math.min(20, variation))
-      dynamicSize.set(position.size + clampedVariation)
-    })
+    // Recalculate ambient position for current time
+    const currentAmbientX = Math.sin(currentTime * ambientParams.speedX + ambientParams.phaseX) * ambientParams.radiusX
+    const currentAmbientY = Math.cos(currentTime * ambientParams.speedY + ambientParams.phaseY) * ambientParams.radiusY
     
-    // Also update on time changes (for time-based variation)
-    const interval = setInterval(() => {
-      const mouseXVal = mouseX.get()
-      const mouseYVal = mouseY.get()
-      const dampened = ambientDampen.get()
-      
-      const mouseDistance = Math.sqrt(mouseXVal * mouseXVal + mouseYVal * mouseYVal)
-      const ambientDistance = Math.sqrt(ambientX * ambientX + ambientY * ambientY) * dampened
-      const movementFactor = (mouseDistance + ambientDistance) / 50
-      const timeBasedVariation = Math.sin(time * 0.001 + index) * 0.5
-      const variation = (movementFactor * 0.3 + timeBasedVariation * 0.7) * 20
-      const clampedVariation = Math.max(-20, Math.min(20, variation))
-      dynamicSize.set(position.size + clampedVariation)
-    }, 16) // ~60fps
+    // Calculate movement distance from center
+    const mouseDistance = Math.sqrt(mouseXVal * mouseXVal + mouseYVal * mouseYVal)
+    const ambientDistance = Math.sqrt(currentAmbientX * currentAmbientX + currentAmbientY * currentAmbientY) * dampened
     
-    return () => {
-      unsubscribeX()
-      unsubscribeY()
-      clearInterval(interval)
-    }
-  }, [mouseX, mouseY, ambientDampen, time, index, position.size, ambientX, ambientY])
-
-  // Combine ambient movement with mouse-based movement
-  // Subtract half the dynamic size to center the circle (since left: 50% positions the top-left corner)
-  const x = useTransform(
-    [mouseX, dynamicSize],
-    ([mouseVal, currentSize]: [number, number]) => {
-      const dampened = ambientDampen.get()
-      return position.x - currentSize / 2 + mouseVal * influence + ambientX * dampened
-    }
-  )
-  
-  const y = useTransform(
-    [mouseY, dynamicSize],
-    ([mouseVal, currentSize]: [number, number]) => {
-      const dampened = ambientDampen.get()
-      return position.y - currentSize / 2 + mouseVal * influence + ambientY * dampened
-    }
-  )
+    // Combine movements and normalize to create size variation
+    // Use a sine wave based on time and movement for smooth oscillation
+    const movementFactor = (mouseDistance + ambientDistance) / 50
+    const timeBasedVariation = Math.sin(currentTime * 0.001 + index) * 0.5
+    
+    // Combine both factors, limit to +/- 20 pixels
+    const variation = (movementFactor * 0.3 + timeBasedVariation * 0.7) * 20
+    const clampedVariation = Math.max(-20, Math.min(20, variation))
+    const currentSize = position.size + clampedVariation
+    dynamicSize.set(currentSize)
+    
+    // Update position with new size for proper centering
+    x.set(position.x - currentSize / 2 + mouseXVal * influence + currentAmbientX * dampened)
+    y.set(position.y - currentSize / 2 + mouseYVal * influence + currentAmbientY * dampened)
+  })
 
   // Calculate scale based on hover and selected state
   const getScale = () => {
