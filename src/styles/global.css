@@ -28,10 +28,6 @@
   --z-dropdown: 100;
   --z-sticky: 200;
   --z-modal: 1000;
-
-  /* Safe area insets for iOS PWA (notch, home indicator) */
-  /* Use constant() fallback for iOS 11.0-11.2, env() for iOS 11.2+ */
-  /* Note: We use calc() with fallbacks directly in usage, not as variables */
 }
 
 * {
@@ -57,14 +53,11 @@ body {
   color: var(--color-text);
   background-color: var(--color-background);
   transition: background-color var(--timing-normal) ease, color var(--timing-normal) ease;
-  height: 100%;
+  min-height: 100vh;
 }
 
 #root {
-  /* Account for safe areas in viewport height calculation */
-  /* Use constant() fallback for iOS 11.0-11.2, env() for iOS 11.2+ */
-  min-height: calc(100vh - constant(safe-area-inset-top) - constant(safe-area-inset-bottom));
-  min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  min-height: 100vh;
 }
 
 button {
