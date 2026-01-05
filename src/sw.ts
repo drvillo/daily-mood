@@ -137,6 +137,10 @@ self.addEventListener('message', (event) => {
   const { type, data } = event.data || {}
 
   switch (type) {
+    case 'SKIP_WAITING':
+      self.skipWaiting()
+      break
+
     case 'NOTIFICATION_SETTINGS':
       notificationEnabled = data?.enabled ?? false
       if (notificationEnabled) {

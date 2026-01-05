@@ -17,7 +17,8 @@ export function useServiceWorkerUpdate(): UpdateState {
 
   const applyUpdate = useCallback(() => {
     if (workbox) {
-      console.log('[SW] User requested update, activating new version...')
+      console.log('[SW] User requested update, activating new version2...')
+      setUpdateAvailable(false) // Hide toast immediately
       workbox.messageSkipWaiting()
     }
   }, [workbox])
