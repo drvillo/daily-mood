@@ -34,10 +34,14 @@ export function NotificationSettings() {
   const isNotificationSupported = typeof Notification !== 'undefined'
 
   if (!isNotificationSupported) {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+
     return (
       <div className={styles.container}>
         <p className={styles.unsupported}>
-          Notifications are not supported in this browser.
+        {isIOS 
+          ? 'To enable notifications on iOS, add this app to your Home Screen first. Tap the Share button, then "Add to Home Screen".'
+          : 'Notifications are not supported in this browser.'}
         </p>
       </div>
     )

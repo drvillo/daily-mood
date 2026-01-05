@@ -44,6 +44,21 @@
   width: 100%;
 }
 
+.buildInfo {
+    text-align: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    padding-bottom: calc(1.5rem + 53px + var(--spacing-sm));
+    font-size: 0.75rem;
+    color: var(--color-text-muted, #888);
+    opacity: 0.6;
+  }
+  
+  @media (max-width: 480px) {
+    .buildInfo {
+      padding-bottom: calc(1rem + 53px + var(--spacing-sm));
+    }
+  }
+
 /* Desktop: horizontal layout */
 @media (min-width: 768px) {
   .footerContent {

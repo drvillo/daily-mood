@@ -47,6 +47,9 @@ export function SettingsFooter() {
     }
   }
 
+  // Format build info for display
+  const buildInfo = `${__BUILD_HASH__} • ${new Date(__BUILD_TIME__).toLocaleDateString()}`
+
   return (
     <>
       {/* Toggle Button */}
@@ -90,6 +93,9 @@ export function SettingsFooter() {
               <div className={styles.footerSection}>
                 <NotificationSettings />
               </div>
+            </div>
+            <div className={styles.buildInfo}>
+              {buildInfo}
             </div>
           </motion.footer>
         )}
