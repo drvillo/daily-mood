@@ -1,5 +1,7 @@
 .app {
-  min-height: 100vh;
+  /* Account for safe areas in viewport height */
+  min-height: calc(100vh - constant(safe-area-inset-top) - constant(safe-area-inset-bottom));
+  min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   background: var(--color-background);
@@ -15,7 +17,9 @@
 .logViewWrapper {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  /* Account for safe areas in viewport height */
+  min-height: calc(100vh - constant(safe-area-inset-top) - constant(safe-area-inset-bottom));
+  min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
 }
 
 .logView {
@@ -24,15 +28,20 @@
   align-items: center;
   justify-content: center;
   flex: 1;
-  min-height: 100vh;
+  /* Account for safe areas in viewport height */
+  min-height: calc(100vh - constant(safe-area-inset-top) - constant(safe-area-inset-bottom));
+  min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   padding: 2rem;
   padding-bottom: 5rem;
 }
 
 .viewYearLink {
   position: fixed;
-  bottom: 1.5rem;
-  left: 1.5rem;
+  /* Account for safe area bottom inset (home indicator) */
+  bottom: calc(1.5rem + constant(safe-area-inset-bottom));
+  bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  left: calc(1.5rem + constant(safe-area-inset-left));
+  left: calc(1.5rem + env(safe-area-inset-left));
   z-index: 100;
   
   padding: 0.5rem 0.75rem;
@@ -163,8 +172,11 @@
 
 @media (max-width: 480px) {
   .viewYearLink {
-    bottom: 1rem;
-    left: 1rem;
+    /* Account for safe area bottom inset (home indicator) */
+    bottom: calc(1rem + constant(safe-area-inset-bottom));
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    left: calc(1rem + constant(safe-area-inset-left));
+    left: calc(1rem + env(safe-area-inset-left));
     font-size: 0.85rem;
   }
 }

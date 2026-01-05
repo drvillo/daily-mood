@@ -1,6 +1,8 @@
 .toggleButtonWrapper {
   position: fixed;
-  bottom: 1.5rem; /* Match View Year button Y position */
+  /* Account for safe area bottom inset (home indicator) */
+  bottom: calc(1.5rem + constant(safe-area-inset-bottom));
+  bottom: calc(1.5rem + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
@@ -14,7 +16,9 @@
 
 .footer {
   position: fixed;
-  bottom: 0;
+  /* Extend to edges, but account for safe area bottom inset (home indicator) */
+  bottom: constant(safe-area-inset-bottom);
+  bottom: env(safe-area-inset-bottom);
   left: 0;
   right: 0;
   z-index: 99;
@@ -25,6 +29,11 @@
 
   max-width: 100%;
   width: 100%;
+  /* Add padding to content to respect safe areas */
+  padding-left: constant(safe-area-inset-left);
+  padding-left: env(safe-area-inset-left);
+  padding-right: constant(safe-area-inset-right);
+  padding-right: env(safe-area-inset-right);
 }
 
 .footerContent {
@@ -77,7 +86,9 @@
 /* Mobile adjustments */
 @media (max-width: 480px) {
   .toggleButtonWrapper {
-    bottom: 1rem; /* Match View Year button Y position on mobile */
+    /* Account for safe area bottom inset (home indicator) */
+    bottom: calc(1rem + constant(safe-area-inset-bottom));
+    bottom: calc(1rem + env(safe-area-inset-bottom));
   }
 
   .footerContent {
