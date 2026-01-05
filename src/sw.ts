@@ -204,7 +204,10 @@ self.addEventListener('notificationclick', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     (async () => {
-      // Clear old caches if needed
+      // Take control of all clients immediately - critical for PWA updates
+      await self.clients.claim()
+      
+      // Start notification checking if enabled
       if (notificationEnabled) {
         startNotificationChecking()
       }

@@ -20,6 +20,9 @@ export function useServiceWorkerUpdate(): UpdateState {
       console.log('[SW] User requested update, activating new version...')
       setUpdateAvailable(false) // Hide toast immediately
       workbox.messageSkipWaiting()
+      
+      // Fallback: if controlling event doesn't fire (iOS quirks), reload anyway
+      setTimeout(() => window.location.reload(), 2000)
     }
   }, [workbox])
 
@@ -37,7 +40,8 @@ export function useServiceWorkerUpdate(): UpdateState {
 
     try {
       // Initialize Workbox with the service worker file
-      wb = new Workbox('/sw.js')
+      // updateViaCache: 'none' ensures browser doesn't use cached SW when checking for updates
+      wb = new Workbox('/sw.js', { updateViaCache: 'none' })
       setWorkbox(wb)
 
       // Listen for when a new service worker is waiting

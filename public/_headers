@@ -1,0 +1,12 @@
+# Cloudflare Pages headers configuration
+# Prevent caching of service worker and manifest for reliable PWA updates
+
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/manifest.webmanifest
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/manifest.json
+  Cache-Control: no-cache, no-store, must-revalidate
+
