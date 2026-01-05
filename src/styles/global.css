@@ -40,6 +40,8 @@ html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Extend background color to edges for iOS PWA */
+  background-color: var(--color-background);
 }
 
 body {
@@ -50,6 +52,11 @@ body {
   color: var(--color-text);
   background-color: var(--color-background);
   transition: background-color var(--timing-normal) ease, color var(--timing-normal) ease;
+  /* Safe area padding for iOS PWA (notch, home indicator) */
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 #root {
