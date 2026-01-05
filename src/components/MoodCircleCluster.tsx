@@ -36,7 +36,6 @@ const CIRCLE_SIZES = [140, 130, 120, 110] // Sizes for each circle
 const COMPACT_CIRCLE_SIZES = [90, 85, 80, 75] // Sizes for compact mode
 const SIZE_VARIATION = 0.15 // 15% size variation based on speed (1.0x to 1.15x)
 const SIZE_SMOOTHING = 0.15 // Smoothing factor for size transitions (0-1, higher = smoother)
-const SIZE_SPEED_SCALE = 0.5 // Speed scaling factor for size calculation
 
 // Physics state for each circle
 interface CirclePhysics {
