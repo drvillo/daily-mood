@@ -100,6 +100,30 @@ function AppContent() {
   // Initialize service worker update handler
   useServiceWorkerUpdate()
 
+  // #region agent log - Debug iOS PWA safe area
+  useEffect(() => {
+    const computedStyle = getComputedStyle(document.documentElement);
+    const bodyStyle = getComputedStyle(document.body);
+    const rootEl = document.getElementById('root');
+    const rootStyle = rootEl ? getComputedStyle(rootEl) : null;
+    const isStandalone = ('standalone' in window.navigator) && (window.navigator as any).standalone;
+    const displayMode = window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser';
+    const viewportMeta = document.querySelector('meta[name="viewport"]')?.getAttribute('content') || 'not-found';
+    const statusBarMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')?.getAttribute('content') || 'not-found';
+    
+    // Get actual computed safe area values by creating a test element
+    const testEl = document.createElement('div');
+    testEl.style.cssText = 'position:fixed;top:0;left:0;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);visibility:hidden;';
+    document.body.appendChild(testEl);
+    const testStyle = getComputedStyle(testEl);
+    const actualSafeTop = testStyle.paddingTop;
+    const actualSafeBottom = testStyle.paddingBottom;
+    document.body.removeChild(testEl);
+
+    fetch('http://127.0.0.1:7243/ingest/89541bf6-c0b4-472a-abdd-3cba9f911754',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:debug',message:'iOS PWA Debug Info',data:{hypothesisA_statusBarMeta:statusBarMeta,hypothesisB_actualSafeAreaTop:actualSafeTop,hypothesisB_actualSafeAreaBottom:actualSafeBottom,hypothesisB_viewportMeta:viewportMeta,hypothesisC_isStandalone:isStandalone,hypothesisC_displayMode:displayMode,hypothesisD_bodyHeight:bodyStyle.height,hypothesisD_rootHeight:rootStyle?.minHeight,hypothesisD_htmlBgColor:computedStyle.backgroundColor,hypothesisD_bodyBgColor:bodyStyle.backgroundColor,windowInnerHeight:window.innerHeight,windowOuterHeight:window.outerHeight,screenHeight:window.screen.height,userAgent:navigator.userAgent},timestamp:Date.now(),sessionId:'debug-session',runId:'run1'})}).catch(()=>{});
+  }, []);
+  // #endregion
+
   // Sync notification settings with service worker on mount and when it changes
   useEffect(() => {
     if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
