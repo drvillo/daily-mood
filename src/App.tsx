@@ -1,6 +1,6 @@
 import { HashRouter, Routes, Route } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { MoodProvider } from '@/hooks/useMoodData'
 import { ViewModeProvider, useViewMode } from '@/hooks/useViewMode'
@@ -34,6 +34,7 @@ function LogView({ onMoodSelect }: LogViewProps) {
     <div className={styles.logView}>
       <MoodSelector 
         onSelect={handleMoodSelect}
+        onSkip={switchToReflect}
       />
       <button
         className={styles.viewYearLink}
@@ -101,11 +102,8 @@ function AppContent() {
   useServiceWorkerUpdate()
 
   // #region agent log - Debug iOS PWA safe area
+  const [debugInfo, setDebugInfo] = React.useState<Record<string, string> | null>(null);
   useEffect(() => {
-    const computedStyle = getComputedStyle(document.documentElement);
-    const bodyStyle = getComputedStyle(document.body);
-    const rootEl = document.getElementById('root');
-    const rootStyle = rootEl ? getComputedStyle(rootEl) : null;
     const isStandalone = ('standalone' in window.navigator) && (window.navigator as any).standalone;
     const displayMode = window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser';
     const viewportMeta = document.querySelector('meta[name="viewport"]')?.getAttribute('content') || 'not-found';
@@ -113,14 +111,30 @@ function AppContent() {
     
     // Get actual computed safe area values by creating a test element
     const testEl = document.createElement('div');
-    testEl.style.cssText = 'position:fixed;top:0;left:0;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);visibility:hidden;';
+    testEl.style.cssText = 'position:fixed;top:0;left:0;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);visibility:hidden;';
     document.body.appendChild(testEl);
     const testStyle = getComputedStyle(testEl);
     const actualSafeTop = testStyle.paddingTop;
     const actualSafeBottom = testStyle.paddingBottom;
+    const actualSafeLeft = testStyle.paddingLeft;
+    const actualSafeRight = testStyle.paddingRight;
     document.body.removeChild(testEl);
 
-    fetch('http://127.0.0.1:7243/ingest/89541bf6-c0b4-472a-abdd-3cba9f911754',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:debug',message:'iOS PWA Debug Info',data:{hypothesisA_statusBarMeta:statusBarMeta,hypothesisB_actualSafeAreaTop:actualSafeTop,hypothesisB_actualSafeAreaBottom:actualSafeBottom,hypothesisB_viewportMeta:viewportMeta,hypothesisC_isStandalone:isStandalone,hypothesisC_displayMode:displayMode,hypothesisD_bodyHeight:bodyStyle.height,hypothesisD_rootHeight:rootStyle?.minHeight,hypothesisD_htmlBgColor:computedStyle.backgroundColor,hypothesisD_bodyBgColor:bodyStyle.backgroundColor,windowInnerHeight:window.innerHeight,windowOuterHeight:window.outerHeight,screenHeight:window.screen.height,userAgent:navigator.userAgent},timestamp:Date.now(),sessionId:'debug-session',runId:'run1'})}).catch(()=>{});
+    const info = {
+      mode: isStandalone ? 'STANDALONE PWA' : displayMode === 'standalone' ? 'STANDALONE (media)' : 'BROWSER',
+      safeTop: actualSafeTop,
+      safeBottom: actualSafeBottom,
+      safeLeft: actualSafeLeft,
+      safeRight: actualSafeRight,
+      statusBar: statusBarMeta,
+      viewportFit: viewportMeta.includes('viewport-fit=cover') ? 'cover ✓' : 'NOT SET ✗',
+      innerH: `${window.innerHeight}px`,
+      screenH: `${window.screen.height}px`,
+    };
+    setDebugInfo(info);
+    console.log('[DEBUG] iOS PWA Info:', info);
+
+    fetch('http://127.0.0.1:7243/ingest/89541bf6-c0b4-472a-abdd-3cba9f911754',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:debug',message:'iOS PWA Debug Info',data:{...info,userAgent:navigator.userAgent},timestamp:Date.now(),sessionId:'debug-session',runId:'run1'})}).catch(()=>{});
   }, []);
   // #endregion
 
@@ -176,6 +190,14 @@ function AppContent() {
       
       {/* Flash overlay effect - persists across view changes */}
       <MoodFlashOverlay flashMood={flashMood} />
+      
+      {/* #region agent log - Debug overlay */}
+      {debugInfo && (
+        <div style={{position:'fixed',top:0,left:0,right:0,background:'rgba(0,0,0,0.85)',color:'#0f0',fontSize:'10px',padding:'4px 8px',zIndex:9999,fontFamily:'monospace',whiteSpace:'pre-wrap'}}>
+          {Object.entries(debugInfo).map(([k,v])=>`${k}: ${v}`).join(' | ')}
+        </div>
+      )}
+      {/* #endregion */}
     </div>
   )
 }
