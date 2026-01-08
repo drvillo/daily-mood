@@ -151,6 +151,13 @@ function AppContent() {
       {/* Settings footer - visible on all views */}
       <SettingsFooter />
       
+      {/* Logo - positioned to the right of the footer toggle button */}
+      <img
+        src="/moodpixels-logo.png"
+        alt="MoodPixels"
+        className={styles.logo}
+      />
+      
       {/* Flash overlay effect - persists across view changes */}
       <MoodFlashOverlay flashMood={flashMood} />
     </div>

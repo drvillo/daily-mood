@@ -168,6 +168,19 @@
   z-index: 10;
 }
 
+.logo {
+  position: fixed;
+  /* Account for safe area bottom inset (home indicator) */
+  bottom: calc(1.5rem + constant(safe-area-inset-bottom));
+  bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  right: calc(1.5rem + constant(safe-area-inset-right));
+  right: calc(1.5rem + env(safe-area-inset-right));
+  width: 107px;
+  height: auto;
+  z-index: 100;
+  pointer-events: none;
+}
+
 @media (max-width: 480px) {
   .viewYearLink {
     /* Account for safe area bottom inset (home indicator) */
@@ -176,6 +189,16 @@
     left: calc(1rem + constant(safe-area-inset-left));
     left: calc(1rem + env(safe-area-inset-left));
     font-size: 0.85rem;
+  }
+
+  .logo {
+    /* Account for safe area bottom inset (home indicator) */
+    bottom: calc(1rem + constant(safe-area-inset-bottom));
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    right: calc(1rem + constant(safe-area-inset-right));
+    right: calc(1rem + env(safe-area-inset-right));
+    width: 103px;
+    height: auto;
   }
 }
 
